@@ -1,0 +1,17 @@
+[build]
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Redirect /connect/gmail to the Gmail OAuth function
+[[redirects]]
+  from = "/connect/gmail"
+  to = "/.netlify/functions/gmail-auth"
+  status = 200
+
+# Redirect /connect/outlook to the Outlook OAuth function
+[[redirects]]
+  from = "/connect/outlook"
+  to = "/.netlify/functions/outlook-auth"
+  status = 200
