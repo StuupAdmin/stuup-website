@@ -600,10 +600,88 @@ function EarningsScreen({ store }) {
   )
 }
 
+// ─── SETUP SCREEN (one-time password creation) ────────────────────────────────
+function SetupScreen({ token, onComplete }) {
+  const [storeInfo, setInfo]    = useState(null)
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm]   = useState('')
+  const [loading, setLoading]   = useState(true)
+  const [saving, setSaving]     = useState(false)
+  const [error, setError]       = useState('')
+
+  useEffect(() => {
+    async function validate() {
+      const res = await fetch(`/api/partner-setup?token=${token}`)
+      const data = await res.json()
+      setLoading(false)
+      if (data.error) { setError(data.error); return }
+      if (data.alreadySet) {
+        setError('You already have a password set. Just sign in normally.')
+        return
+      }
+      setInfo(data)
+    }
+    validate()
+  }, [token])
+
+  async function handleSet() {
+    setError('')
+    if (password.length < 8) { setError('Password must be at least 8 characters.'); return }
+    if (password !== confirm) { setError('Passwords do not match.'); return }
+    setSaving(true)
+    const res = await api('/api/partner-setup', { action: 'set-password', token, password })
+    setSaving(false)
+    if (res.error) { setError(res.error); return }
+    saveSession(res.store)
+    onComplete(res.store)
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '40px 24px', maxWidth: 480, margin: '0 auto', animation: 'fadeIn 0.25s ease' }}>
+      <div style={{ marginBottom: 44 }}><Wordmark /></div>
+
+      {loading && <Spinner />}
+
+      {error && !storeInfo && (
+        <>
+          <Alert type="error">{error}</Alert>
+          <div style={{ fontSize: 13, color: C.muted, marginTop: 8 }}>
+            Contact <a href="mailto:hello@stuup.co" style={{ color: C.black, fontWeight: 600, textDecoration: 'none' }}>hello@stuup.co</a> for help.
+          </div>
+        </>
+      )}
+
+      {storeInfo && (
+        <>
+          <div style={{ fontSize: 13, fontWeight: 500, color: C.muted, marginBottom: 4 }}>Welcome to Stuup</div>
+          <div style={{ fontSize: 28, fontWeight: 300, textTransform: 'uppercase', letterSpacing: '-0.5px', marginBottom: 4 }}>{storeInfo.storeName}</div>
+          <div style={{ fontSize: 13, color: C.muted, marginBottom: 28 }}>
+            Set a password for <strong style={{ color: C.black }}>{storeInfo.email}</strong>. You'll use this every time you log in.
+          </div>
+
+          {error && <Alert type="error">{error}</Alert>}
+
+          <Input label="New password" type="password" value={password} onChange={setPassword} placeholder="At least 8 characters" autoFocus />
+          <Input label="Confirm password" type="password" value={confirm} onChange={setConfirm} placeholder="Type it again" />
+
+          <div style={{ marginTop: 6 }}>
+            <BtnDark onClick={handleSet} loading={saving} disabled={!password || !confirm}>
+              Set password & sign in
+            </BtnDark>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 // ─── APP ROOT ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [store, setStore] = useState(() => loadSession())
   const [view, setView]   = useState('home') // home | scan | release | earnings
+
+  // Check if this is a setup link (e.g. partner.stuup.co/setup?token=XXX)
+  const setupToken = new URLSearchParams(window.location.search).get('token')
 
   // Push a dummy history entry whenever we navigate away from home,
   // so the phone's back button hits that entry first instead of leaving the site.
@@ -624,13 +702,21 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePop)
   }, [])
 
+  function handleLogin(s) {
+    setStore(s)
+    setView('home')
+    window.history.replaceState({}, '', '/')
+  }
+
   return (
     <>
       <style>{globalStyle}</style>
       <div style={{ minHeight: '100vh', background: C.white, color: C.black, display: 'flex', flexDirection: 'column', maxWidth: 480, margin: '0 auto' }}>
 
-        {!store
-          ? <LoginScreen onLogin={s => { setStore(s); setView('home') }} />
+        {setupToken && !store
+          ? <SetupScreen token={setupToken} onComplete={handleLogin} />
+          : !store
+          ? <LoginScreen onLogin={handleLogin} />
           : <>
               <Header storeName={store.name} onLogout={() => { clearSession(); setStore(null) }} />
               <div style={{ flex: 1, overflowY: 'auto' }}>
