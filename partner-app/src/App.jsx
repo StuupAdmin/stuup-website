@@ -605,6 +605,25 @@ export default function App() {
   const [store, setStore] = useState(() => loadSession())
   const [view, setView]   = useState('home') // home | scan | release | earnings
 
+  // Push a dummy history entry whenever we navigate away from home,
+  // so the phone's back button hits that entry first instead of leaving the site.
+  // When the browser fires popstate (back button), we intercept it and go to home.
+  useEffect(() => {
+    if (view !== 'home') {
+      window.history.pushState({ stuup: true }, '')
+    }
+  }, [view])
+
+  useEffect(() => {
+    function handlePop() {
+      setView('home')
+      // Push again so subsequent back presses are also intercepted
+      window.history.pushState({ stuup: true }, '')
+    }
+    window.addEventListener('popstate', handlePop)
+    return () => window.removeEventListener('popstate', handlePop)
+  }, [])
+
   return (
     <>
       <style>{globalStyle}</style>
