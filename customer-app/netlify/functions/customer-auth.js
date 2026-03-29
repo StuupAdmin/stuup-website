@@ -70,10 +70,16 @@ export default async (req) => {
       return json({ error: 'No phone number on file. Contact hello@stuup.co to update your account.' }, 400)
     }
 
+    // DEV BYPASS: always accept 000000 for the founder's test account
+    const DEV_EMAILS = ['kmowarin@gmail.com']
     const otp = generateOTP()
     const expiry = Date.now() + 10 * 60 * 1000 // 10 minutes
 
+    // Store the real OTP plus the bypass code for dev accounts
     otpStore.set(email.toLowerCase(), { otp, expiry, customerId: customer.id })
+    if (DEV_EMAILS.includes(email.toLowerCase())) {
+      otpStore.set(email.toLowerCase() + '__bypass', { otp: '000000', expiry: Date.now() + 24 * 60 * 60 * 1000, customerId: customer.id })
+    }
 
     // Send OTP via Twilio
     const TWILIO_SID = Netlify.env.get('TWILIO_ACCOUNT_SID')
@@ -100,7 +106,11 @@ export default async (req) => {
     const { email, code } = body
     if (!email || !code) return json({ error: 'Email and code required' }, 400)
 
-    const stored = otpStore.get(email.toLowerCase())
+    // Check bypass first for dev accounts
+    const bypass = otpStore.get(email.toLowerCase() + '__bypass')
+    const isBypass = bypass && code.toString() === '000000' && Date.now() <= bypass.expiry
+
+    const stored = isBypass ? bypass : otpStore.get(email.toLowerCase())
     if (!stored) return json({ error: 'Code expired or not found. Request a new one.' }, 401)
     if (Date.now() > stored.expiry) {
       otpStore.delete(email.toLowerCase())
