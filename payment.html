@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Plan — Stuup.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    <style>
+        :root {
+            --ink: #111214;
+            --lime: #DCEE52;
+            --white: #F3F3F3;
+            --gray: #ECECEC;
+            --pure-white: #FFFFFF;
+            --radius-lg: 40px;
+            --radius-md: 20px;
+            --radius-sm: 12px;
+            --radius-pill: 100px;
+            --shadow-soft: 0 12px 32px rgba(17, 18, 20, 0.06), 0 4px 12px rgba(17, 18, 20, 0.03);
+            --shadow-hover: 0 20px 48px rgba(17, 18, 20, 0.1), 0 8px 16px rgba(17, 18, 20, 0.04);
+            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            background-color: var(--white);
+            color: var(--ink);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(243, 243, 243, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(17, 18, 20, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -0.04em;
+            text-decoration: none;
+            color: var(--ink);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: rgba(17, 18, 20, 0.5);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: var(--ink); }
+
+        /* MAIN */
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 50px;
+        }
+
+        /* HERO TEXT */
+        .page-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .page-header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gray);
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+        }
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 12px;
+        }
+        .page-header p {
+            font-size: 1.1rem;
+            color: rgba(17, 18, 20, 0.6);
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* INCLUDED FEATURES */
+        .included {
+            background: var(--pure-white);
+            border-radius: var(--radius-md);
+            padding: 28px 36px;
+            margin: 40px 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .included-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(17, 18, 20, 0.4);
+            margin-bottom: 16px;
+        }
+        .included-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px 20px;
+        }
+        .included-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: rgba(17, 18, 20, 0.75);
+        }
+        .included-item svg {
+            flex-shrink: 0;
+            width: 15px;
+            height: 15px;
+            stroke: var(--ink);
+        }
+
+        /* PLAN CARDS */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 12px;
+        }
+
+        .plan-card {
+            background: var(--pure-white);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            border: 1.5px solid transparent;
+            transition: all 0.3s var(--ease-spring);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: var(--shadow-soft);
+        }
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--ink);
+        }
+        .plan-card.popular {
+            border: 2px solid var(--ink);
+            box-shadow: 12px 12px 0px var(--lime);
+        }
+        .plan-card.popular:hover {
+            box-shadow: 16px 16px 0px var(--lime);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--ink);
+            color: var(--white);
+            padding: 6px 16px;
+            border-radius: var(--radius-pill);
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .plan-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--gray);
+            border-radius: 50%;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--ink);
+        }
+        .popular .plan-icon { background: var(--lime); }
+        .plan-icon svg { width: 28px; height: 28px; stroke: var(--ink); fill: none; stroke-width: 2.5; }
+
+        .plan-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .plan-price {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .plan-price span {
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0.4;
+        }
+        .plan-desc {
+            font-size: 0.85rem;
+            color: rgba(17, 18, 20, 0.45);
+            font-weight: 600;
+            margin-bottom: 28px;
+        }
+        .plan-pkg {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--gray);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            margin-bottom: 28px;
+            flex-grow: 1;
+        }
+        .popular .plan-pkg { background: rgba(220, 238, 82, 0.15); }
+        .plan-pkg-num {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .plan-pkg-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.5;
+        }
+
+        .btn-select {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-pill);
+            border: 2px solid var(--ink);
+            background: transparent;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
+            color: var(--ink);
+        }
+        .plan-card:hover .btn-select,
+        .popular .btn-select {
+            background: var(--ink);
+            color: var(--white);
+        }
+
+        /* FOOTER NOTE */
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: rgba(17, 18, 20, 0.45);
+            font-weight: 600;
+        }
+        .footer-note a {
+            color: var(--ink);
+            text-decoration: underline;
+        }
+
+        /* SITE FOOTER */
+        footer {
+            padding: 60px 50px;
+            background: var(--ink);
+            color: var(--white);
+            margin-top: 100px;
+            border-top: 20px solid var(--lime);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: var(--white);
+        }
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            font-size: 0.9rem;
+            opacity: 0.5;
+        }
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+        }
+        .footer-links a:hover { opacity: 1; }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            header { padding: 16px 20px; }
+            .logo { font-size: 1.4rem; }
+            main { padding: 48px 20px; }
+            .page-header h1 { font-size: 2rem; }
+            .included { padding: 20px; }
+            .included-grid { grid-template-columns: 1fr 1fr; }
+            .plans-grid { grid-template-columns: 1fr; gap: 32px; }
+            .plan-card { padding: 28px; }
+            footer { flex-direction: column; gap: 24px; align-items: flex-start; padding: 40px 20px; }
+            .footer-links { flex-wrap: wrap; gap: 16px; }
+        }
+
+        @media (max-width: 480px) {
+            .included-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="/" class="logo">stuup.</a>
+    <a href="/" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to home
+    </a>
+</header>
+
+<main>
+    <div class="page-header">
+        <div class="badge">
+            <svg width="8" height="8" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="currentColor"/></svg>
+            Almost there
+        </div>
+        <h1>Choose your plan.</h1>
+        <p>You're all signed up. Now pick the package volume that fits your life — you can change it anytime.</p>
+    </div>
+
+    <div class="included">
+        <div class="included-label">Everything included on every plan</div>
+        <div class="included-grid">
+            <div class="included-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                SMS + email alerts on every arrival
+            </div>
+            <div class="included-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                6-digit secure pickup code
+            </div>
+            <div class="included-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Full package dashboard
+            </div>
+            <div class="included-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Stuup &amp; non-Stuup tracking
+            </div>
+            <div class="included-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                48hr + 72hr pickup reminders
+            </div>
+            <div class="included-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Package photo on arrival
+            </div>
+            <div class="included-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Dispute support
+            </div>
+            <div class="included-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Cancel anytime
+            </div>
+        </div>
+    </div>
+
+    <div class="plans-grid">
+
+        <!-- STARTER -->
+        <div class="plan-card">
+            <div class="plan-icon">
+                <svg viewBox="0 0 24 24"><path d="M21 8l-9-4-9 4v8l9 4 9-4V8z"/></svg>
+            </div>
+            <div class="plan-name">Starter</div>
+            <div class="plan-price">$6.99<span>/mo</span></div>
+            <div class="plan-desc">Light shoppers</div>
+            <div class="plan-pkg">
+                <div>
+                    <div class="plan-pkg-num">3</div>
+                    <div class="plan-pkg-label">packages / month</div>
+                </div>
+            </div>
+            <a href="https://buy.stripe.com/cNi6oH8Qyd7Hale9Kcc7u01" target="_blank" class="btn-select">Get Starter →</a>
+        </div>
+
+        <!-- STANDARD -->
+        <div class="plan-card popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="plan-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>
+            </div>
+            <div class="plan-name">Standard</div>
+            <div class="plan-price">$14.99<span>/mo</span></div>
+            <div class="plan-desc">Regular shoppers</div>
+            <div class="plan-pkg">
+                <div>
+                    <div class="plan-pkg-num">8</div>
+                    <div class="plan-pkg-label">packages / month</div>
+                </div>
+            </div>
+            <a href="https://buy.stripe.com/eVq14n1o68Rr79209Cc7u02" target="_blank" class="btn-select">Get Standard →</a>
+        </div>
+
+        <!-- POWER -->
+        <div class="plan-card">
+            <div class="plan-icon">
+                <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div class="plan-name">Power</div>
+            <div class="plan-price">$24.99<span>/mo</span></div>
+            <div class="plan-desc">Heavy hitters</div>
+            <div class="plan-pkg">
+                <div>
+                    <div class="plan-pkg-num">15</div>
+                    <div class="plan-pkg-label">packages / month</div>
+                </div>
+            </div>
+            <a href="https://buy.stripe.com/dRm14n9UC0kVfFy1dGc7u03" target="_blank" class="btn-select">Get Power →</a>
+        </div>
+
+    </div>
+
+    <p class="footer-note">
+        Just need one delivery? <a href="https://tally.so/r/dWlg0A">Pay per package at $2.49</a> — no subscription needed.
+    </p>
+</main>
+
+<footer>
+    <div class="footer-logo">stuup.</div>
+    <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/#page-partner">Partners</a>
+        <a href="/#page-support">Support</a>
+        <a href="mailto:hello@stuup.co">hello@stuup.co</a>
+    </div>
+</footer>
+
+</body>
+</html>
